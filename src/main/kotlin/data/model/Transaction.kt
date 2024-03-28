@@ -1,11 +1,20 @@
 package data.model
 
-data class Transaction(
-    val sensorId: String,
-    val prevId1: String,
-    val prevId2: String,
-    val vin: String,
-    val gasLevel: Double,
+class Transaction(
+    val sensorId: Int,
+    val prevIds: List<String>,
+    val gasLevel: String,
+    val epochTime: Long,
     val signedHash: String,
-    val timeStamp: String,
-)
+) {
+    override fun equals(other: Any?) = (other as? Transaction)?.signedHash == signedHash
+
+    override fun hashCode(): Int {
+        var result = sensorId.hashCode()
+        result = 31 * result + prevIds.hashCode()
+        result = 31 * result + gasLevel.hashCode()
+        result = 31 * result + epochTime.hashCode()
+        result = 31 * result + signedHash.hashCode()
+        return result
+    }
+}

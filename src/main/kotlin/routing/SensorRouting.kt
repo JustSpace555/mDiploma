@@ -1,21 +1,28 @@
 package routing
 
 import io.ktor.server.routing.*
-import domain.usecase.RegisterNewSensorByOperatorUseCase
+import domain.usecase.RegisterNewTransactionUseCase
 import domain.usecase.RegisterSensorPublicKeyUseCase
+import domain.usecase.RequestTipsUseCase
 
 class SensorRouting(
-    private val registerNewSensorByOperatorUseCase: RegisterNewSensorByOperatorUseCase,
     private val registerSensorPublicKeyUseCase: RegisterSensorPublicKeyUseCase,
+    private val requestTipsUseCase: RequestTipsUseCase,
+    private val registerNewTransactionUseCase: RegisterNewTransactionUseCase,
 ) {
 
-    fun Routing.sensorRouting() {
-        post("/operator/register/sensor") {
-            registerNewSensorByOperatorUseCase()
-        }
-
+    context(Routing)
+    fun routing() {
         post("/sensor/register/{id}") {
             registerSensorPublicKeyUseCase()
+        }
+
+        get("/sensor/tips") {
+            requestTipsUseCase()
+        }
+
+        post("/sensor/newTransaction") {
+            registerNewTransactionUseCase()
         }
 
         /*

@@ -2,7 +2,7 @@ package data.sensor
 
 import org.jetbrains.exposed.sql.Table
 
-class SensorTable : Table() {
+object SensorTable : Table() {
     val id = integer("id")
     val vin = varchar("vin", 17)
     val gasLiters = integer("gasLiters")

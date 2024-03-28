@@ -1,11 +1,7 @@
 package data.sensor
 
 import data.model.Sensor
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.*
 import utils.dbQuery
 
 class SensorRepository(private val table: SensorTable) {
@@ -20,7 +16,7 @@ class SensorRepository(private val table: SensorTable) {
     }
 
     suspend fun get(id: Int) = dbQuery {
-        table.select { table.id eq id }
+        table.selectAll().where { table.id eq id }
             .map {
                 Sensor(
                     id = id,
@@ -30,8 +26,6 @@ class SensorRepository(private val table: SensorTable) {
                 )
             }.singleOrNull()
     }
-
-    suspend fun delete(id: Int) = dbQuery { table.deleteWhere { table.id eq id } }
 
     suspend fun update(id: Int, vin: String? = null, gasLiters: Int? = null, publicKey: String? = null) = dbQuery {
         table.update({ table.id eq id }) { statement ->

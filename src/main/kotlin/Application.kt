@@ -11,9 +11,9 @@ import data.dataModule
 import domain.domainModule
 import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
+import routing.OperatorRouting
+import routing.SensorRouting
 import routing.routingModule
-import java.security.KeyPairGenerator
-import java.security.MessageDigest
 
 fun main() {
 //    val keyStoreFile = File("build/keystore.jks")
@@ -31,6 +31,34 @@ fun main() {
         connector {
             port = 8080
         }
+        module {
+            install(Koin) {
+                modules(dataModule, domainModule, routingModule)
+            }
+
+            val database by inject<Database>()
+            database.init()
+            install(ContentNegotiation) {
+                json()
+            }
+            configureMonitoring()
+
+            val sensorRouting by inject<SensorRouting>()
+            val operatorRouting by inject<OperatorRouting>()
+            routing {
+                get("/") {
+                    call.respondText("Hello World!")
+                }
+                sensorRouting.routing()
+                operatorRouting.routing()
+            }
+
+//            install(WebSockets) {
+//                pingPeriod = Duration.ofSeconds(15)
+//                timeout = Duration.ofSeconds(15)
+//                maxFrameSize = Long.MAX_VALUE
+//                masking = false
+//            }
 //        sslConnector(
 //            keyStore = keyStore,
 //            keyAlias = SSL_CERT_ALIAS,
@@ -41,43 +69,10 @@ fun main() {
 //                keyStorePath = keyStoreFile
 //            }
 //        )
-        module {
-            install(Koin) {
-                modules(
-                    dataModule,
-                    domainModule,
-                    routingModule,
-                )
-            }
-
-            val database by inject<Database>()
-            database.init()
-            Signature
-            install(ContentNegotiation) {
-                json()
-            }
-//            install(WebSockets) {
-//                pingPeriod = Duration.ofSeconds(15)
-//                timeout = Duration.ofSeconds(15)
-//                maxFrameSize = Long.MAX_VALUE
-//                masking = false
-//            }
-            configureMonitoring()
-            routing {
-                get("/") {
-                    call.respondText("Hello World!")
-                }
-
-                sensorRouting()
-            }
         }
     }
     embeddedServer(Netty, environment).start(wait = true)
 }
-
-private const val SSL_CERT_ALIAS = "diploma"
-private const val SSL_KEY_STORE_PASS = "diploma"
-private const val SSL_PRIVATE_KEY_PASS = "diploma"
 
 /*
 fun main(args: Array<String>) {
@@ -103,5 +98,4 @@ fun main(args: Array<String>) {
 
     println(java.util.Base64.getEncoder().encodeToString(keyPair.public.encoded).length)
 }
-
  */

@@ -25,3 +25,13 @@ suspend fun <T> PipelineContext<Unit, ApplicationCall>.getNotNullOrRespondError(
     call.respond(HttpStatusCode.BadRequest, errorMessage)
     null
 }
+
+suspend fun PipelineContext<Unit, ApplicationCall>.checkOrRespondError(
+    errorMessage: String,
+    errorCode: HttpStatusCode = HttpStatusCode.BadRequest,
+    check: () -> Boolean,
+): Boolean {
+    val checkResult = check()
+    if (!checkResult) call.respond(errorCode, errorMessage)
+    return checkResult
+}
