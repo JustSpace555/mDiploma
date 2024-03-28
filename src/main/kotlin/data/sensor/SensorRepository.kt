@@ -1,6 +1,6 @@
 package data.sensor
 
-import domain.SensorDto
+import data.model.Sensor
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -22,7 +22,7 @@ class SensorRepository(private val table: SensorTable) {
     suspend fun get(id: Int) = dbQuery {
         table.select { table.id eq id }
             .map {
-                SensorDto(
+                Sensor(
                     id = id,
                     vin = it[table.vin],
                     gasLiters = it[table.gasLiters],

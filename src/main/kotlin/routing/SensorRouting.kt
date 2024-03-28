@@ -1,49 +1,43 @@
 package routing
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import domain.SensorDto
+import domain.usecase.RegisterNewSensorByOperatorUseCase
+import domain.usecase.RegisterSensorPublicKeyUseCase
 
-fun Routing.sensorRouting() {
-    post("/operator/register/sensor") {
-        val sensorDto = call.receive<SensorDto>()
-        val sensor = try {
-            SensorMapper.map(sensorDto)
-        } catch (e: IllegalArgumentException) {
-            call.respond(HttpStatusCode.BadRequest, e.localizedMessage)
-            return@post
-        }
-        sensorSchema.insert(sensor)
-        call.respond(HttpStatusCode.OK)
-    }
+class SensorRouting(
+    private val registerNewSensorByOperatorUseCase: RegisterNewSensorByOperatorUseCase,
+    private val registerSensorPublicKeyUseCase: RegisterSensorPublicKeyUseCase,
+) {
 
-    post("/sensor/register/{id}") {
-        val id = call.parameters["id"]?.toInt() ?: run {
-            call.respond(HttpStatusCode.BadRequest, "Id is missing")
-            return@post
+    fun Routing.sensorRouting() {
+        post("/operator/register/sensor") {
+            registerNewSensorByOperatorUseCase()
         }
 
-    }
-
-    get("/sensors/{id}") {
-        val id = call.parameters["id"]?.toInt() ?: run {
-            call.respond(HttpStatusCode.BadRequest, "Id is missing")
-            return@get
+        post("/sensor/register/{id}") {
+            registerSensorPublicKeyUseCase()
         }
-        sensorSchema.get(id)
-            ?.let { sensor -> call.respond(HttpStatusCode.OK, sensor) }
-            ?: call.respond(HttpStatusCode.NotFound)
-    }
 
-    delete("/sensors/{id}") {
-        val id = call.parameters["id"]?.toInt() ?: run {
-            call.respond(HttpStatusCode.BadRequest, "Id is missing")
-            return@delete
+        /*
+        get("/sensors/{id}") {
+            val id = call.parameters["id"]?.toInt() ?: run {
+                call.respond(HttpStatusCode.BadRequest, "Id is missing")
+                return@get
+            }
+            sensorSchema.get(id)
+                ?.let { sensor -> call.respond(HttpStatusCode.OK, sensor) }
+                ?: call.respond(HttpStatusCode.NotFound)
         }
-        sensorSchema.delete(id)
-        call.respond(HttpStatusCode.OK)
+
+        delete("/sensors/{id}") {
+            val id = call.parameters["id"]?.toInt() ?: run {
+                call.respond(HttpStatusCode.BadRequest, "Id is missing")
+                return@delete
+            }
+            sensorSchema.delete(id)
+            call.respond(HttpStatusCode.OK)
+        }
+
+         */
     }
 }

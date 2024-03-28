@@ -7,7 +7,11 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.slf4j.LoggerFactory
 import data.Database
-import routing.sensorRouting
+import data.dataModule
+import domain.domainModule
+import org.koin.ktor.ext.inject
+import org.koin.ktor.plugin.Koin
+import routing.routingModule
 import java.security.KeyPairGenerator
 import java.security.MessageDigest
 
@@ -38,7 +42,16 @@ fun main() {
 //            }
 //        )
         module {
-            Database
+            install(Koin) {
+                modules(
+                    dataModule,
+                    domainModule,
+                    routingModule,
+                )
+            }
+
+            val database by inject<Database>()
+            database.init()
             Signature
             install(ContentNegotiation) {
                 json()
@@ -66,6 +79,7 @@ private const val SSL_CERT_ALIAS = "diploma"
 private const val SSL_KEY_STORE_PASS = "diploma"
 private const val SSL_PRIVATE_KEY_PASS = "diploma"
 
+/*
 fun main(args: Array<String>) {
     val generator = KeyPairGenerator.getInstance("Ed25519")
     val keyPair = generator.generateKeyPair()
@@ -89,3 +103,5 @@ fun main(args: Array<String>) {
 
     println(java.util.Base64.getEncoder().encodeToString(keyPair.public.encoded).length)
 }
+
+ */

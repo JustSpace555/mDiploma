@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 val ktorVersion: String by project
 val kotlinVersion: String by project
 val logbackVersion: String by project
@@ -19,6 +21,12 @@ application {
     mainClass.set("com.example.ApplicationKt")
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
+    }
 }
 
 group = "ru.justspace"
