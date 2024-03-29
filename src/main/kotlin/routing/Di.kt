@@ -6,6 +6,8 @@ val routingModule = module {
     single<OperatorRouting> {
         OperatorRouting(
             registerNewSensorByOperatorUseCase = get(),
+            subscribeToNewTransactionUpdatesUseCase = get(),
+            subscribeToApprovedTransactionUpdatedUseCase = get(),
         )
     }
     single<SensorRouting> {

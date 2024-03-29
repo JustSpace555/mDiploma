@@ -8,9 +8,14 @@ import org.koin.dsl.module
 
 val dataModule = module {
     single<SensorTable> { SensorTable }
+
     single<TransactionTable> { TransactionTable }
+
     single<Database> { Database(get()) }
+
     single<SensorRepository> { SensorRepository(get()) }
+
     single<TransactionRepository> { TransactionRepository(get()) }
+
     single<DagTangleRepository> { DagTangleRepository(get()) }
 }
