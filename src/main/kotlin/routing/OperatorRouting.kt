@@ -4,24 +4,25 @@ import domain.usecase.RegisterNewSensorByOperatorUseCase
 import domain.usecase.SubscribeToApprovedTransactionUpdatedUseCase
 import domain.usecase.SubscribeToNewTransactionUpdatesUseCase
 import io.ktor.server.routing.*
+import io.ktor.server.sse.*
 
 class OperatorRouting(
     private val registerNewSensorByOperatorUseCase: RegisterNewSensorByOperatorUseCase,
-    private val subscribeToApprovedTransactionUpdatedUseCase: SubscribeToApprovedTransactionUpdatedUseCase,
     private val subscribeToNewTransactionUpdatesUseCase: SubscribeToNewTransactionUpdatesUseCase,
+    private val subscribeToApprovedTransactionUpdatedUseCase: SubscribeToApprovedTransactionUpdatedUseCase,
 ) {
 
-    context(Routing)
+    context(RootRoute)
     fun routing() {
         post("/operator/register/sensor") {
             registerNewSensorByOperatorUseCase()
         }
 
-        get("/operator/subscribe/transaction/new") {
+        sse("/operator/subscribe/transaction/new") {
             subscribeToNewTransactionUpdatesUseCase()
         }
 
-        get("/operator/subscribe/transaction/approved") {
+        sse("/operator/subscribe/transaction/approved") {
             subscribeToApprovedTransactionUpdatedUseCase()
         }
     }

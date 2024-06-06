@@ -11,11 +11,17 @@ val dataModule = module {
 
     single<TransactionTable> { TransactionTable }
 
-    single<Database> { Database(get()) }
+    single<Database> { Database(get(), get()) }
 
     single<SensorRepository> { SensorRepository(get()) }
 
     single<TransactionRepository> { TransactionRepository(get()) }
 
-    single<DagTangleRepository> { DagTangleRepository(get()) }
+    single<DagTangleRepository> {
+        DagTangleRepository(
+            sensorRepository = get(),
+            transactionRepository = get(),
+            signature = get(),
+        )
+    }
 }

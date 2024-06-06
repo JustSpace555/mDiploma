@@ -12,13 +12,7 @@ val domainModule = module {
 
     single<SensorSignature> { SensorSignature() }
 
-    factory<RegisterNewTransactionUseCase> {
-        RegisterNewTransactionUseCase(
-            sensorRepository = get(),
-            dagTangleRepository = get(),
-            signature = get(),
-        )
-    }
+    factory<RegisterNewTransactionUseCase> { RegisterNewTransactionUseCase(get()) }
 
     factory<SubscribeToApprovedTransactionUpdatedUseCase> {
         SubscribeToApprovedTransactionUpdatedUseCase(get())

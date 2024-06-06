@@ -7,12 +7,12 @@ import java.security.Signature
 import java.security.spec.X509EncodedKeySpec
 
 class SensorSignature {
-    private val keyFactory = KeyFactory.getInstance(ED25519)
-    private val signature = Signature.getInstance(ED25519)
-    private val sha256 = MessageDigest.getInstance(SHA_256)
+    private val keyFactory by lazy { KeyFactory.getInstance(ED25519) }
+    private val signature by lazy { Signature.getInstance(ED25519) }
+    private val sha256 by lazy { MessageDigest.getInstance(SHA_256) }
 
-    fun publicKeyFromString(publicKey: String): PublicKey =
-        keyFactory.generatePublic(X509EncodedKeySpec(publicKey.toByteArray(Charsets.UTF_8)))
+    fun publicKeyFromString(publicKey: ByteArray): PublicKey =
+        keyFactory.generatePublic(X509EncodedKeySpec(publicKey))
 
     fun hashMessage(message: String): ByteArray = sha256.digest(message.toByteArray(Charsets.UTF_8))
 
@@ -20,10 +20,10 @@ class SensorSignature {
         expectedUnsignedHash: ByteArray,
         actualSignedHash: ByteArray,
         publicKey: PublicKey,
-    ): Boolean {
-        signature.initVerify(publicKey)
-        signature.update(expectedUnsignedHash)
-        return signature.verify(actualSignedHash)
+    ): Boolean = with(signature) {
+        initVerify(publicKey)
+        update(expectedUnsignedHash)
+        verify(actualSignedHash)
     }
 
     private companion object {

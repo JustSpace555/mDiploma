@@ -11,7 +11,7 @@ repositories {
 
 plugins {
     kotlin("jvm") version "1.9.23"
-    id("io.ktor.plugin") version "2.3.9"
+    id("io.ktor.plugin") version "3.0.0-beta-1"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23"
 }
 
@@ -31,29 +31,20 @@ group = "ru.justspace"
 version = "1.0-SNAPSHOT"
 
 dependencies {
-    implementation("io.ktor:ktor-server-core-jvm")
-    implementation("io.ktor:ktor-server-content-negotiation-jvm")
-    implementation("io.ktor:ktor-server-websockets-jvm")
-    implementation("io.ktor:ktor-server-metrics-jvm")
-    implementation("io.ktor:ktor-server-call-logging-jvm")
-    implementation("io.ktor:ktor-server-call-id-jvm")
-    implementation("io.ktor:ktor-server-netty-jvm")
-
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
+    implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-call-logging-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-sse-jvm:$ktorVersion")
 
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 
     implementation("com.h2database:h2:$h2Version")
 
-    implementation("io.ktor:ktor-network-tls-jvm")
-    implementation("io.ktor:ktor-network-tls-certificates:$ktorVersion")
-
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("io.insert-koin:koin-ktor:$koinVersion")
-
-//    testImplementation("io.ktor:ktor-server-tests-jvm")
-//    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
 }

@@ -11,7 +11,7 @@ class SensorRouting(
     private val registerNewTransactionUseCase: RegisterNewTransactionUseCase,
 ) {
 
-    context(Routing)
+    context(RootRoute)
     fun routing() {
         post("/sensor/register/{id}") {
             registerSensorPublicKeyUseCase()
@@ -24,27 +24,5 @@ class SensorRouting(
         post("/sensor/newTransaction") {
             registerNewTransactionUseCase()
         }
-
-        /*
-        get("/sensors/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: run {
-                call.respond(HttpStatusCode.BadRequest, "Id is missing")
-                return@get
-            }
-            sensorSchema.get(id)
-                ?.let { sensor -> call.respond(HttpStatusCode.OK, sensor) }
-                ?: call.respond(HttpStatusCode.NotFound)
-        }
-
-        delete("/sensors/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: run {
-                call.respond(HttpStatusCode.BadRequest, "Id is missing")
-                return@delete
-            }
-            sensorSchema.delete(id)
-            call.respond(HttpStatusCode.OK)
-        }
-
-         */
     }
 }

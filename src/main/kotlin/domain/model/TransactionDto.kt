@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 data class TransactionDto(
     @SerialName("id")
     val sensorId: Int?,
-    val oldTransactions: List<String>?,
+    val prevIds: List<String>?,
     val gasLevel: String?,
-    val timeStamp: Long?,
+    val epochTime: ULong?,
     val signedHash: String?,
 )

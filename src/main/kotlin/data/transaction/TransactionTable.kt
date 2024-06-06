@@ -8,7 +8,7 @@ object TransactionTable : Table() {
     val sensorId = integer("sensorId") references SensorTable.id
     val prevIds = array<String>("prevIds")
     val gasLevel = double("gasLevel")
-    val epochTime = long("epochTime")
+    val epochTime = ulong("epochTime")
 
     override val primaryKey = PrimaryKey(signature)
 }

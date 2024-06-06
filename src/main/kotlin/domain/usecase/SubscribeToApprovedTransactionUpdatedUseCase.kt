@@ -1,14 +1,12 @@
 package domain.usecase
 
 import data.DagTangleRepository
-import io.ktor.server.application.*
-import io.ktor.util.pipeline.*
-import utils.respondSse
+import io.ktor.server.sse.*
 
 class SubscribeToApprovedTransactionUpdatedUseCase(private val repository: DagTangleRepository) {
 
-    context(PipelineContext<Unit, ApplicationCall>)
+    context(ServerSSESession)
     suspend operator fun invoke() {
-        call.respondSse(repository.subscribeToApprovedTransactionUpdates())
+        repository.subscribeToApprovedTransactionUpdates().collect { string -> send(data = string) }
     }
 }

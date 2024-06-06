@@ -2,6 +2,7 @@ package data.transaction
 
 import data.model.Transaction
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import utils.dbQuery
 
 class TransactionRepository(private val table: TransactionTable) {
@@ -14,5 +15,9 @@ class TransactionRepository(private val table: TransactionTable) {
             it[gasLevel] = transaction.gasLevel.toDouble()
             it[epochTime] = transaction.epochTime
         }
+    }
+
+    suspend fun get(signature: String) = dbQuery {
+        table.selectAll().where { table.signature eq signature }.singleOrNull()
     }
 }

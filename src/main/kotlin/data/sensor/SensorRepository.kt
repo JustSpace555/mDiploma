@@ -11,7 +11,7 @@ class SensorRepository(private val table: SensorTable) {
             it[id] = sensor.id
             it[vin] = sensor.vin
             it[gasLiters] = sensor.gasLiters
-            it[publicKey] = sensor.publicKey
+            it[publicKey] = sensor.publicKey.asList()
         }
     }
 
@@ -22,16 +22,16 @@ class SensorRepository(private val table: SensorTable) {
                     id = id,
                     vin = it[table.vin],
                     gasLiters = it[table.gasLiters],
-                    publicKey = it[table.publicKey],
+                    publicKey = it[table.publicKey].toByteArray(),
                 )
             }.singleOrNull()
     }
 
-    suspend fun update(id: Int, vin: String? = null, gasLiters: Int? = null, publicKey: String? = null) = dbQuery {
+    suspend fun update(id: Int, vin: String? = null, gasLiters: Float? = null, publicKey: ByteArray? = null) = dbQuery {
         table.update({ table.id eq id }) { statement ->
             vin?.let { vinNotNull -> statement[table.vin] = vinNotNull }
             gasLiters?.let { litersNotNull -> statement[table.gasLiters] = litersNotNull }
-            publicKey?.let { keyNotNull -> statement[table.publicKey] = keyNotNull }
+            publicKey?.let { keyNotNull -> statement[table.publicKey] = keyNotNull.asList() }
         }
     }
 }

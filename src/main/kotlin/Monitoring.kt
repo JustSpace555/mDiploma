@@ -1,31 +1,15 @@
-import com.codahale.metrics.*
-import io.ktor.http.*
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.LoggerContext
 import io.ktor.server.application.*
-import io.ktor.server.metrics.dropwizard.*
-import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.callloging.*
-import io.ktor.server.request.*
-import java.util.concurrent.TimeUnit
-import org.slf4j.event.*
+import org.slf4j.LoggerFactory
 
 fun Application.configureMonitoring() {
-    install(DropwizardMetrics) {
-        Slf4jReporter.forRegistry(registry)
-            .outputTo(this@configureMonitoring.log)
-            .convertRatesTo(TimeUnit.SECONDS)
-            .convertDurationsTo(TimeUnit.MILLISECONDS)
-            .build()
-            .start(10, TimeUnit.SECONDS)
-    }
-    install(CallLogging) {
-        level = Level.INFO
-        filter { call -> call.request.path().startsWith("/") }
-        callIdMdc("call-id")
-    }
-    install(CallId) {
-        header(HttpHeaders.XRequestId)
-        verify { callId: String ->
-            callId.isNotEmpty()
-        }
-    }
+
+    (LoggerFactory.getILoggerFactory() as LoggerContext)
+        .getLogger(Logger.ROOT_LOGGER_NAME)
+        .level = Level.ALL
+
+    install(CallLogging)
 }

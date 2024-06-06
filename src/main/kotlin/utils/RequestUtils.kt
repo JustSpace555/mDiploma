@@ -1,11 +1,10 @@
 package utils
 
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.response.*
-import io.ktor.util.pipeline.*
+import io.ktor.server.routing.*
 
-suspend fun <T> PipelineContext<Unit, ApplicationCall>.getOrRespondError(
+suspend fun <T> RoutingContext.getOrRespondError(
     errorCode: HttpStatusCode = HttpStatusCode.BadRequest,
     errorMessage: String? = null,
     block: suspend () -> T?
@@ -18,7 +17,7 @@ suspend fun <T> PipelineContext<Unit, ApplicationCall>.getOrRespondError(
     null
 }
 
-suspend fun <T> PipelineContext<Unit, ApplicationCall>.getNotNullOrRespondError(
+suspend fun <T> RoutingContext.getNotNullOrRespondError(
     value: T?,
     errorMessage: String,
 ): T? = value ?: run {
@@ -26,7 +25,7 @@ suspend fun <T> PipelineContext<Unit, ApplicationCall>.getNotNullOrRespondError(
     null
 }
 
-suspend fun PipelineContext<Unit, ApplicationCall>.checkOrRespondError(
+suspend fun RoutingContext.checkOrRespondError(
     errorMessage: String,
     errorCode: HttpStatusCode = HttpStatusCode.BadRequest,
     check: () -> Boolean,

@@ -1,10 +1,10 @@
 package data.model
 
-class Transaction(
+data class Transaction(
     val sensorId: Int,
     val prevIds: List<String>,
     val gasLevel: String,
-    val epochTime: Long,
+    val epochTime: ULong,
     val signedHash: String,
 ) {
     override fun equals(other: Any?) = (other as? Transaction)?.signedHash == signedHash

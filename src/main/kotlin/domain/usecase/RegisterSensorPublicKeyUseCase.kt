@@ -1,26 +1,32 @@
 package domain.usecase
 
 import data.sensor.SensorRepository
-import domain.model.SensorPublicKeyRegisterDto
+import domain.model.RegisterSensorPublicKeyDto
 import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
-import io.ktor.util.pipeline.*
+import io.ktor.server.routing.*
+import io.ktor.utils.io.*
+import kotlinx.serialization.json.Json
 import utils.getNotNullOrRespondError
-import utils.getOrRespondError
+import java.nio.charset.Charset
 
 class RegisterSensorPublicKeyUseCase(private val repository: SensorRepository) {
 
-    context(PipelineContext<Unit, ApplicationCall>)
+    context(RoutingContext)
     suspend operator fun invoke() {
-        val sensorId = getNotNullOrRespondError(call.parameters["id"]?.toInt(), "Missing id param") ?: return
-        val body = getOrRespondError(errorMessage = "Missing request body") {
-            call.receive<SensorPublicKeyRegisterDto>()
-        } ?: return
-        val publicKey = getNotNullOrRespondError(body.publicKey, "Missing publicKey value")
+        val sensorId = getNotNullOrRespondError(
+            call.parameters["id"]?.toInt(),
+            "Missing id param"
+        ) ?: return
 
-        repository.update(id = sensorId, publicKey = publicKey)
-        call.respond(HttpStatusCode.OK)
+        val channel = call.request.receiveChannel()
+        val ba = ByteArray(channel.availableForRead)
+        channel.readFully(ba)
+        val bodyStr = ba.toString(Charset.defaultCharset())
+        val body = Json.decodeFromString<RegisterSensorPublicKeyDto>(bodyStr)
+        val publicKey = getNotNullOrRespondError(body.publicKey, "Missing publicKey value") ?: return
+
+        repository.update(id = sensorId, publicKey = publicKey.map { it.toByte() }.toByteArray())
+        call.respond(HttpStatusCode.OK, repository.get(sensorId)!!.gasLiters)
     }
 }
